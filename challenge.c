@@ -11,15 +11,20 @@ int main (int argc, char *argv[])
     short memory[32768];
     short* sp;
     short pc;
-        
-    readInstruction(&opcode, &a[0], &a[1], &a[2]);
+    FILE* pFile;
     
-    printf("\n\n%d\n\n", readNextCode());
+    pFile = fopen(argv[1], "rb");
+    
+    readInstruction(pFile, &opcode, &a[0], &a[1], &a[2]);
+    
+    printf("%hd %hd %hd %hd \n", opcode, a[0], a[1], a[2]);
+
+    return(0);
 }
 
-void readInstruction(short* opcode, short* a1, short* a2, short* a3)
+void readInstruction(FILE* pFile, short* opcode, short* a1, short* a2, short* a3)
 {
-    *opcode = readNextCode();
+    *opcode = readNextCode(pFile);
     if ( *opcode == 0 ||
          *opcode == 18 ||
          *opcode == 21 ) // no arguments to opcode, so exit.
@@ -34,7 +39,7 @@ void readInstruction(short* opcode, short* a1, short* a2, short* a3)
               *opcode == 19 ||
               *opcode == 20 ) // 1 argument for the opcode, read one and exit
     {
-        *a1 = readNextCode();
+        *a1 = readNextCode(pFile);
         return;
     }
     
@@ -45,29 +50,28 @@ void readInstruction(short* opcode, short* a1, short* a2, short* a3)
               *opcode == 15 ||
               *opcode == 26 ) // 2 argument for the opcode, read one and exit
     {
-        *a1 = readNextCode();
-        *a2 = readNextCode();        
+        *a1 = readNextCode(pFile);
+        *a2 = readNextCode(pFile);        
         return;
     }
     
     else // if there isn't 0, 1, or 2 arguments, then there must be 3.
     {
-        *a1 = readNextCode();
-        *a2 = readNextCode();
-        *a3 = readNextCode();                
+        *a1 = readNextCode(pFile);
+        *a2 = readNextCode(pFile);
+        *a3 = readNextCode(pFile);                
         return;
     }
     
+    return; // We should never get here though.
 }
 
-short readNextCode(void)
+short readNextCode(FILE* pFile)
 {
-    FILE* pFile;
     short *pCode, code;
     
     pCode = &code;
     
-    pFile = fopen("challenge.bin", "rb");
     fread(pCode, 2, 1, pFile);
    
     return code;
