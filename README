@@ -2,5 +2,12 @@ This is a programming challenge found at https://challenge.synacor.com/
 
 Compiled using linaro gcc 4.6.3 found on Ubuntu 12.04
 
+"arch-spec" defines the challenge.
+"challenge.bin" is the test file to run on the created VM
+"challenge.c" and "challenge.h" are the source code for the VM
+"cr.sh" compiles and runs the vm with the provided test input.
+
+TODO: Create my own known test binary to test the very lowest levels of the VM.
+
 email: work
 passwork home router
