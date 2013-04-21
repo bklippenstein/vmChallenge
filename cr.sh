@@ -8,5 +8,3 @@ printf "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
 #./challenge challenge.bin
 
-./challenge "test"
-

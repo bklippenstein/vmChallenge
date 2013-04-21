@@ -14,3 +14,6 @@ short readNextCode(FILE* pFile);
 // Function to return only the next 16  bits of the binary file.
 // It is not yet known if we will ever need to seek to a particular line of the file.
 
+int executeInstruction(short* opcode, short* a1, short* a2, short* a3);
+// Fuction to execute the instruction passed.
+// returns 1 for sucess, -1 for failure.

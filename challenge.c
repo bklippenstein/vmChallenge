@@ -1,24 +1,29 @@
 # include "stdio.h"
+# include "stdlib.h"
 # include "challenge.h"
 
+short r[8];
+short stack[32768];
+short memory[32768];
+short* sp;
+short pc;
 
 int main (int argc, char *argv[])
 {
-    short opcode;
+    extern short stack[32768];
+    extern short* sp;
     short a[3];
-    short r[8];
-    short stack[32768];
-    short memory[32768];
-    short* sp;
-    short pc;
+    short opcode;
     FILE* pFile;
+    sp = &stack[0];
     
     pFile = fopen(argv[1], "rb");
+    while(1)
+    {
+        readInstruction(pFile, &opcode, &a[0], &a[1], &a[2]);
+        executeInstruction(&opcode, &a[0], &a[1], &a[2]);
+    }
     
-    readInstruction(pFile, &opcode, &a[0], &a[1], &a[2]);
-    
-    printf("%hd %hd %hd %hd \n", opcode, a[0], a[1], a[2]);
-
     return(0);
 }
 
@@ -73,6 +78,61 @@ short readNextCode(FILE* pFile)
     pCode = &code;
     
     fread(pCode, 2, 1, pFile);
+    
+    if( code > 32776 )
+    {
+        fprintf(stderr, "Invalid value read from binary. Program terminated.");
+        fclose(pFile);
+    }
    
     return code;
 }
+
+int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
+{
+    printf("Opcode: %hd\n", *opcode);
+    extern short* sp;
+    extern short r[8];
+    switch( *opcode )
+    {
+        case 0: // Halt execution
+            printf("Program execution finished, terminating program.\n");
+            exit(1);
+            break;
+            
+        case 1:  // set register
+            if (*a1 < 32768) // 'a' isn't a register
+            {
+                fprintf(stderr, "argument 'a' with op code 1 is not a register");
+                exit(-1);
+            }
+            if (*a2 < 32768) // 'b' is a literal
+            {
+                r[*a1 % 32768] = *a2; // set register r[*a1] to contain *a2
+            }
+            else if (*a2 > 32767) // 'b' is a register
+            {
+                r[*a1 % 32768] = r[*a2 % 32768]; // set register r[*a1] to contain r[*a2]
+            }
+            break;
+            
+        case 2: // push register r[*a1] to stack at sp, incriment sp.
+            if(*a1 < 32768) // if the argument is a literal
+            {
+                *sp = *a1; // Push the value to the stack.
+                sp++; // Incremet the stack pointer
+            }
+            else if(*a1 > 32767) // if the argument is a register.
+            {
+                *sp = r[*a1 % 32768]; // Push the value to the stack.
+                sp++; // Incremet the stack pointer
+            }
+            break;
+    }
+    return(1);
+}
+
+
+
+
+
