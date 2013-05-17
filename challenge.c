@@ -90,10 +90,11 @@ short readNextCode(FILE* pFile)
 
 int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
 {
-    printf("Opcode: %hd\n", *opcode);
-    extern short stack;
+    short temp[3];
+    extern short stack[32768];
     extern short* sp;
     extern short r[8];
+    printf("Opcode: %hd\n", *opcode);
     switch( *opcode )
     {
         case 0: // Halt execution
@@ -145,7 +146,26 @@ int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
             break;
             
         case 4: // eq, set r[*a1] to 1 if *a2 is equal to *a3, 0 otherwise/
-            if(*a2 > 32767) // a2 is a register, so we need to 
+            if(*a2 > 32767) // a2 is a register, so we need to take the value stored in that register.
+            {
+                temp[0] = r[*a2 % 32767];
+            }
+            else if(*a2 < 32768) //a2 is a literal.
+            {
+                temp[0] = *a2;
+            }
+                
+            if(*a3 > 32767) // a2 is a register, so we need to take the value stored in that register.
+            {
+                temp[1] = r[*a3 % 32767];
+            }
+            else if(*a3 < 32768) //a2 is a literal.
+            {
+                temp[1] = *a3;
+            }
+            
+            *a1 = (temp[0] == temp[1]); //store the result of b==c in <a>
+            break;
     }
     return(1);
 }
