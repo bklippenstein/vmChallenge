@@ -91,6 +91,7 @@ short readNextCode(FILE* pFile)
 int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
 {
     printf("Opcode: %hd\n", *opcode);
+    extern short stack;
     extern short* sp;
     extern short r[8];
     switch( *opcode )
@@ -116,7 +117,7 @@ int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
             }
             break;
             
-        case 2: // push register r[*a1] to stack at sp, incriment sp.
+        case 2: // push value to stack at sp, incriment sp.
             if(*a1 < 32768) // if the argument is a literal
             {
                 *sp = *a1; // Push the value to the stack.
@@ -128,6 +129,23 @@ int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
                 sp++; // Incremet the stack pointer
             }
             break;
+            
+        case 3: // Pop value from stack
+            if (sp == &stack[0]) // If there isn't anything on the stack
+            {
+                fprintf(stderr, "Error: stack is empty, can't pop.\n");
+                fprintf(stderr, "Terminating program.\n");
+                exit(-1);
+            }
+            else if(*a1 > 32767) // if the argument is a register.
+            {
+                sp--; // Decrincremet the stack pointer
+                r[*a1 % 32768] = *sp; // Pop the value from the stack to register r[*a1]
+            }
+            break;
+            
+        case 4: // eq, set r[*a1] to 1 if *a2 is equal to *a3, 0 otherwise/
+            if(*a2 > 32767) // a2 is a register, so we need to 
     }
     return(1);
 }
