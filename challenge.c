@@ -1,33 +1,37 @@
+# include "memory.h"
 # include "stdio.h"
 # include "stdlib.h"
 # include "challenge.h"
 
 short r[8];
-short stack[32768];
-short memory[32768];
+//extern short stack[32768];
+extern short memory[32768];
 short* sp;
 short pc;
 
 int main (int argc, char *argv[])
 {
-    extern short stack[32768];
-    extern short* sp;
-    short a[3];
-    short opcode;
-    FILE* pFile;
-    sp = &stack[0];
+    printf("Beginning execution of VM\n\n"); 
     
-    pFile = fopen(argv[1], "rb");
-    while(1)
+    //extern short stack[32768];
+//    extern short* sp;
+//    short a[3];
+//    short opcode;
+//    sp = &stack[0];
+    FILE* pFile;
+    pFile = fopen(argv[1], "rb");   
+    readBinary(pFile);
+    
+    /*while(1)
     {
         readInstruction(pFile, &opcode, &a[0], &a[1], &a[2]);
         executeInstruction(&opcode, &a[0], &a[1], &a[2]);
-    }
+    }*/
     
     return(0);
 }
 
-void readInstruction(FILE* pFile, short* opcode, short* a1, short* a2, short* a3)
+/*void readInstruction(FILE* pFile, short* opcode, short* a1, short* a2, short* a3)
 {
     *opcode = readNextCode(pFile);
     if ( *opcode == 0 ||
@@ -173,4 +177,4 @@ int executeInstruction(short* opcode, short* a1, short* a2, short* a3)
 
 
 
-
+*/

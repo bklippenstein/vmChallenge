@@ -2,9 +2,9 @@
 
 rm *~
 
-gcc -Wall challenge.c -o challenge
+gcc -Wall -v challenge.c memory.c -o challenge
 
 printf "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
-#./challenge challenge.bin
+./challenge challenge.bin
 
